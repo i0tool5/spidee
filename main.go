@@ -48,6 +48,8 @@ type Fetched struct {
 	hrefs   []string
 }
 
+type FetchedArr []Fetched
+
 func fetch(url string) Fetched {
 	req, err := http.Get(url)
 	if err != nil {
@@ -106,7 +108,7 @@ func endsWith(s, ending string) bool {
 	return strings.HasSuffix(s, ending)
 }
 
-func (c *Crawler) startFetchers(ctx context.Context, inpCh chan []string, outCh chan []Fetched) {
+func (c *Crawler) startFetchers(ctx context.Context, inpCh chan []string, outCh chan FetchedArr) {
 	for {
 		select {
 		case <-ctx.Done():
@@ -118,7 +120,7 @@ func (c *Crawler) startFetchers(ctx context.Context, inpCh chan []string, outCh 
 				close(outCh)
 				return
 			}
-			z := make([]Fetched, 0)
+			z := make(FetchedArr, 0)
 			inside := make(chan string)
 			dn := make(chan bool)
 			go func() {
@@ -148,10 +150,10 @@ func (c *Crawler) startFetchers(ctx context.Context, inpCh chan []string, outCh 
 	}
 }
 
-func (c *Crawler) startCheckers(cancelFunc func(), ch chan []Fetched, fout, out chan []string) {
+func (c *Crawler) startCheckers(cancelFunc func(), ch chan FetchedArr, fout, out chan []string) {
 	done := make(chan bool, c.parsCoro)
 	for i := 0; i < c.parsCoro; i++ {
-		go func(n int, cf chan []Fetched, tf, o chan []string, d chan bool) {
+		go func(n int, cf chan FetchedArr, tf, o chan []string, d chan bool) {
 			for {
 				fetchedArr, ok := <-cf
 				if !ok {
@@ -164,10 +166,9 @@ func (c *Crawler) startCheckers(cancelFunc func(), ch chan []Fetched, fout, out 
 				for _, fStruct := range fetchedArr {
 					hrefs := fStruct.hrefs
 					for _, href := range hrefs {
-						switch {
-						case strings.HasPrefix(href, "http"):
+						if strings.HasPrefix(href, "http") {
 							addr = href
-						default:
+						} else {
 							addr = fStruct.baseURL + href
 						}
 						if !c.visit(addr) {
@@ -230,7 +231,7 @@ func (c *Crawler) Crawl() {
 
 	schan := make(chan []string)
 	ichan := make(chan []string)
-	fchan := make(chan []Fetched)
+	fchan := make(chan FetchedArr)
 	ctx, cancel := context.WithCancel(context.Background())
 	// init
 	go func() {
