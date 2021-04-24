@@ -6,4 +6,5 @@ Simple crawler written in Go.
 - Some urls can broke the crawler due to the lack of sanity checking of the urls.
 - The source code isn't located in different directories/modules.
 - **The source code isn't quite DRY and KISS, but I'll try to make it like this .**
+
 ***I will fix all of this later.***
