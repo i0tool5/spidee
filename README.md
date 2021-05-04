@@ -3,8 +3,25 @@ Simple crawler written in Go.
 
 ## Known issues and problems
 - The user must specify both the format and the file arguments to save what crawler finds to a file. 
-- Some urls can broke the crawler due to the lack of sanity checking of the urls.
-- The source code isn't located in different directories/modules.
-- **The source code isn't quite DRY and KISS, but I'll try to make it like this .**
+***I will fix this later.***
 
-***I will fix all of this later.***
+## Purpose
+I wrote this simple web-crawler for learning purposes... and for fun!
+
+## Usage
+```golang
+  -depth
+        provides crawling depth (default 1)
+  -fetchers
+        Set number of data fetcher goroutines (default 1)
+  -formats
+        comma separated list of formats. urls ending with them will be saved into outfile
+  -ignore
+        comma separated list of ignored domains
+  -outfile
+        provides output file
+  -parsers
+        Set number of url parser goroutines (default 1)
+  -url
+        provides url to crawl
+```
