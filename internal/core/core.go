@@ -8,6 +8,9 @@ import (
 	"regexp"
 )
 
+// Fetcher interface
+type Fetcher interface {}
+
 /*
 * Fetched it's a structure which represents
 *  data retrieved from remote source
@@ -19,11 +22,11 @@ type Fetched struct {
 
 type FetchedArr []Fetched
 
-func (f *Fetched) GetHrefs() []string {
+func (f *Fetched) Hrefs() []string {
 	return f.hrefs
 }
 
-func (f *Fetched) GetBase() string {
+func (f *Fetched) Base() string {
 	return f.baseURL
 }
 
