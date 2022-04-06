@@ -3,8 +3,9 @@ package main
 import (
 	"flag"
 	"fmt"
+	"strings"
 
-	"github.com/i0tool5/spidee/internal/core/crawler"
+	"github.com/i0tool5/spidee/internal/crawler"
 )
 
 // CLI arguments variables
@@ -30,12 +31,28 @@ func init() {
 }
 
 func main() {
-	fmt.Println("[*] Starting crawler...")
-	if begin != "" {
-		c := crawler.NewCrawler(begin, outFile, formats, ignore, dpth, netRoutines, parsRoutines)
-		c.Crawl()
-	} else {
+	if begin == "" {
 		flag.PrintDefaults()
+		return
 	}
+
+	fmt.Println("[*] Starting crawler...")
+
+	cfg := &crawler.Config{
+		Depth:    dpth,
+		NetGoro:  netRoutines,
+		ParsGoro: parsRoutines,
+		StartURL: begin,
+		FileOut:  outFile,
+	}
+
+	constraints := &crawler.Constraints{
+		SaveFmts: strings.Split(formats, ","),
+		Ignored:  strings.Split(ignore, ","),
+	}
+
+	c := crawler.NewCrawler(cfg, constraints)
+	c.Crawl()
+
 	fmt.Println("[*] Crawler done!")
 }
