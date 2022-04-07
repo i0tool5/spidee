@@ -30,19 +30,20 @@ func (f *Fetched) Base() string {
 	return f.baseURL
 }
 
-func Fetch(url string) Fetched {
+func Fetch(url string) (*Fetched, error) {
 	req, err := http.Get(url)
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
+
 	dat, err := ioutil.ReadAll(req.Body)
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
 	req.Body.Close()
 	p := parsePage(dat)
 
-	return Fetched{baseURL: url, hrefs: p}
+	return &Fetched{baseURL: url, hrefs: p}, nil
 }
 
 func parsePage(data []byte) []string {

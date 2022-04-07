@@ -3,6 +3,7 @@ package crawler
 import (
 	"context"
 	"fmt"
+	"log"
 	"strings"
 	"sync"
 	"time"
@@ -31,6 +32,7 @@ type Constraints struct {
 type Crawler struct {
 	visited     map[string]bool
 	mutex       *sync.Mutex
+	depthMut	*sync.Mutex
 	wg          *sync.WaitGroup
 	cfg         *Config
 	constraints *Constraints
@@ -48,8 +50,12 @@ func (c *Crawler) send(urls []string, ch chan string) {
 func (c *Crawler) fetch(wg *sync.WaitGroup, urlCh chan string, out chan core.Fetched) {
 	for url := range urlCh {
 		fmt.Printf("[Fetching]> %s\n", url)
-		dat := core.Fetch(url)
-		out <- dat
+		dat, err := core.Fetch(url)
+		if err != nil {
+			log.Printf("error %v\n", err)
+			continue
+		}
+		out <- *dat
 	}
 	wg.Done()
 }
@@ -69,7 +75,7 @@ func (c *Crawler) blah(urls []string, goros int) (fetched core.FetchedArr) {
 
 	wg.Add(goros)
 	for i := 0; i < goros; i++ {
-		go c.fetch(wg, urlCh, outCh) // wait
+		go c.fetch(wg, urlCh, outCh)
 	}
 
 	go func() {
@@ -138,7 +144,7 @@ func (c *Crawler) Crawl() {
 	var (
 		beginTime   = time.Now()
 		startURL    = c.cfg.StartURL
-		schan       = make(chan []string)
+		urlsChan    = make(chan []string)
 		fileChan    = make(chan []string)
 		fetchArrCh  = make(chan core.FetchedArr)
 		ctx, cancel = context.WithCancel(context.Background())
@@ -146,7 +152,7 @@ func (c *Crawler) Crawl() {
 
 	// init
 	go func() {
-		schan <- []string{startURL}
+		urlsChan <- []string{startURL}
 		c.cfg.Depth--
 	}()
 
@@ -155,8 +161,8 @@ func (c *Crawler) Crawl() {
 	}
 
 	// TODO: refactor
-	go c.startCheckers(cancel, fetchArrCh, fileChan, schan)
-	c.startFetchers(ctx, schan, fetchArrCh)
+	go c.startCheckers(cancel, fetchArrCh, fileChan, urlsChan)
+	c.startFetchers(ctx, urlsChan, fetchArrCh)
 
 	endTime := time.Now()
 	fmt.Printf("[INFO] Started at %v\n[INFO] Ended at %v\n", beginTime, endTime)
@@ -170,6 +176,7 @@ func NewCrawler(cfg *Config, constraints *Constraints /*,fetcher interface*/) (c
 		wg:          new(sync.WaitGroup),
 		visited:     make(map[string]bool),
 		mutex:       new(sync.Mutex),
+		depthMut: 	 new(sync.Mutex),
 	}
 
 	return
