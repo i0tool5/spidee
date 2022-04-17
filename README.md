@@ -1,3 +1,5 @@
+[![Go Report Card](https://goreportcard.com/badge/github.com/i0tool5/spidee)](https://goreportcard.com/report/github.com/i0tool5/spidee)
+
 # spidee
 Simple crawler written in Go.
 
