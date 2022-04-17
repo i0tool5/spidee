@@ -9,7 +9,7 @@ import (
 )
 
 // Fetcher interface
-type Fetcher interface {}
+type Fetcher interface{}
 
 /*
 * Fetched it's a structure which represents

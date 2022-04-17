@@ -32,7 +32,7 @@ type Constraints struct {
 type Crawler struct {
 	visited     map[string]bool
 	mutex       *sync.Mutex
-	depthMut	*sync.Mutex
+	depthMut    *sync.Mutex
 	wg          *sync.WaitGroup
 	cfg         *Config
 	constraints *Constraints
@@ -176,7 +176,7 @@ func NewCrawler(cfg *Config, constraints *Constraints /*,fetcher interface*/) (c
 		wg:          new(sync.WaitGroup),
 		visited:     make(map[string]bool),
 		mutex:       new(sync.Mutex),
-		depthMut: 	 new(sync.Mutex),
+		depthMut:    new(sync.Mutex),
 	}
 
 	return
