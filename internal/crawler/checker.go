@@ -18,7 +18,7 @@ func (c *Crawler) genSlices(baseAddr string, hrefs []string) (
 	for _, href := range hrefs {
 		addr, err := misc.GenAddr(baseAddr, href)
 		if err != nil {
-			log.Printf("[!] error occured %v\n", err)
+			log.Printf("[!] error occurred %v\n", err)
 			break
 		}
 
