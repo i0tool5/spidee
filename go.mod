@@ -1,3 +1,3 @@
 module github.com/i0tool5/spidee
 
-go 1.18
+go 1.21
