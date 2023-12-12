@@ -14,7 +14,7 @@ import (
 
 // Config for the crawler
 type Config struct {
-	Depth    int
+	Depth    int32
 	NetGoro  int
 	ParsGoro int
 	// mainURL  string
@@ -135,10 +135,7 @@ func (c *Crawler) visit(url string) (resp bool) {
 	return
 }
 
-// func (c *Crawler) ChangeDepth() {
-// 	atomic.AddUint64()
-// }
-
+// Crawl starts the crawler
 func (c *Crawler) Crawl() {
 
 	var (
@@ -169,7 +166,7 @@ func (c *Crawler) Crawl() {
 }
 
 // NewCrawler returns new crawler instance
-func NewCrawler(cfg *Config, constraints *Constraints /*,fetcher interface*/) (c *Crawler) {
+func NewCrawler(cfg *Config, constraints *Constraints) (c *Crawler) {
 	c = &Crawler{
 		cfg:         cfg,
 		constraints: constraints,
@@ -181,23 +178,3 @@ func NewCrawler(cfg *Config, constraints *Constraints /*,fetcher interface*/) (c
 
 	return
 }
-
-// func NewCrawler(begin, fo, svFmts, ignr string, cdepth, nc, pc int) *Crawler {
-// 	c := &Crawler{
-// 		startURL: begin,
-// 		depth:    cdepth,
-// 		visited:  make(map[string]bool),
-// 		locker:   make(chan bool, 1),
-// 		netCoro:  nc,
-// 		parsCoro: pc,
-// 	}
-// 	n, err := url.Parse(begin)
-// 	if err != nil {
-// 		log.Fatal(err)
-// 	}
-// 	c.fileOut = fo
-// 	c.svFmts = strings.Split(svFmts, ",")
-// 	c.ignored = strings.Split(ignr, ",")
-// 	c.mainURL = n.Scheme + "://" + n.Host
-// 	return c
-// }

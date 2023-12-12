@@ -3,6 +3,7 @@ package crawler
 import (
 	"fmt"
 	"log"
+	"sync/atomic"
 	"time"
 
 	"github.com/i0tool5/spidee/internal/core"
@@ -10,7 +11,8 @@ import (
 )
 
 func (c *Crawler) genSlices(baseAddr string, hrefs []string) (
-	urls, tout []string) {
+	urls, tout []string,
+) {
 
 	urls = make([]string, 0)
 	tout = make([]string, 0)
@@ -67,7 +69,7 @@ func (c *Crawler) checker(fetchArr <-chan core.FetchedArr, tf, o chan []string) 
 			if c.cfg.Depth > 0 {
 				o <- urls
 			}
-			c.cfg.Depth-- // TODO: make it atomic since it can run in a goroutine
+			atomic.AddInt32(&c.cfg.Depth, -1)
 		}
 	}
 }

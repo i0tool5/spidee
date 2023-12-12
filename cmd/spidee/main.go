@@ -10,7 +10,7 @@ import (
 
 // CLI arguments variables
 var (
-	dpth         int
+	depth        int
 	netRoutines  int
 	parsRoutines int
 	begin        string
@@ -24,7 +24,7 @@ func init() {
 	flag.StringVar(&outFile, "outfile", "", "provides output file ")
 	flag.StringVar(&formats, "formats", "", "comma separated list of `formats`. urls ending with them will be saved into outfile")
 	flag.StringVar(&ignore, "ignore", "", "comma separated list of ignored domains")
-	flag.IntVar(&dpth, "depth", 1, "provides crawling depth")
+	flag.IntVar(&depth, "depth", 1, "provides crawling depth")
 	flag.IntVar(&parsRoutines, "parsers", 1, "Set number of url parser goroutines")
 	flag.IntVar(&netRoutines, "fetchers", 1, "Set number of data fetcher goroutines")
 	flag.Parse()
@@ -39,7 +39,7 @@ func main() {
 	fmt.Println("[*] Starting crawler...")
 
 	cfg := &crawler.Config{
-		Depth:    dpth,
+		Depth:    int32(depth),
 		NetGoro:  netRoutines,
 		ParsGoro: parsRoutines,
 		StartURL: begin,
